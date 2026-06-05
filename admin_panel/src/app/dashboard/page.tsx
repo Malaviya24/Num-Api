@@ -130,8 +130,8 @@ export default function DashboardPage() {
                 <div className="font-bold mb-2">RECENT TASKS:</div>
                 {tasks.map(t => (
                   <div key={t.id} className="text-sm border-b border-muted pb-2 mb-2">
-                    <div>{t.filename} - [{t.status.toUpperCase()}]</div>
-                    {t.status === 'processing' && <AsciiProgressBar progress={t.progress} length={20} />}
+                    <div>{t.filename} - [{t.status?.toUpperCase() || 'UNKNOWN'}]</div>
+                    {t.status?.toLowerCase() === 'processing' && <AsciiProgressBar progress={t.progress || 0} length={20} />}
                   </div>
                 ))}
               </div>
@@ -235,12 +235,8 @@ export default function DashboardPage() {
             <div className="space-y-1">
               {files.map((f, i) => (
                 <div key={i} className="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-muted py-1 text-sm gap-1">
-                  <span className="break-all">{f.filename} ({f.size})</span>
-                  {f.status === 'ready' ? (
-                    <button onClick={() => handleImportFile(f.filename)} className="text-primary hover:bg-primary hover:text-black self-start sm:self-auto">[ IMPORT ]</button>
-                  ) : (
-                    <span className={f.status === 'importing' ? 'text-secondary animate-blink self-start sm:self-auto' : 'text-primary self-start sm:self-auto'}>[ {f.status.toUpperCase()} ]</span>
-                  )}
+                  <span className="break-all">{f.filename} ({(f.size / 1024 / 1024).toFixed(2)} MB)</span>
+                  <button onClick={() => handleImportFile(f.filename)} className="text-primary hover:bg-primary hover:text-black self-start sm:self-auto">[ IMPORT ]</button>
                 </div>
               ))}
               {files.length === 0 && (
