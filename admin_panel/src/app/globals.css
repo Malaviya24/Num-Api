@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #0a0a0a;
+  --color-foreground: #33ff00;
+  
+  --color-primary: #33ff00;
+  --color-secondary: #ffb000;
+  --color-muted: #1f521f;
+  --color-error: #ff3333;
+  --color-border: #1f521f;
+
+  --font-mono: var(--font-jetbrains-mono), monospace;
+  --font-sans: var(--font-jetbrains-mono), monospace;
+}
+
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 5px rgba(51, 255, 0, 0.5);
+  }
+  .animate-blink {
+    animation: blink 1s step-end infinite;
+  }
+  .scanlines {
+    background: linear-gradient(
+      to bottom,
+      rgba(255,255,255,0),
+      rgba(255,255,255,0) 50%,
+      rgba(0,0,0,0.2) 50%,
+      rgba(0,0,0,0.2)
+    );
+    background-size: 100% 4px;
+  }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+html, body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-mono);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+input {
+  background: transparent;
+  color: var(--color-primary);
+  border: none;
+  outline: none;
+}
+input:focus {
+  outline: none;
+}
+input::placeholder {
+  color: var(--color-muted);
+}
