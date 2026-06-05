@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Search Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">Admin Dashboard</div>
+        <div class="nav-links">
+            <button id="logoutBtn" class="btn-outline">Logout</button>
+        </div>
+    </nav>
+    <div class="container">
+        <!-- Stats Section -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Records</h3>
+                <div class="stat-value" id="statTotalRecords">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Imported Files</h3>
+                <div class="stat-value" id="statTotalFiles">0</div>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="section search-section">
+            <h2>Customer Search</h2>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Enter Mobile Number (e.g. 9876543210)">
+                <button id="searchBtn" class="btn-primary">Search</button>
+            </div>
+            <div id="searchTime" class="search-time"></div>
+            <div class="table-container">
+                <table id="resultsTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Mobile</th>
+                            <th>Email</th>
+                            <th>City</th>
+                            <th>State</th>
+                            <th>Company</th>
+                            <th>Source</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsBody">
+                        <!-- Results go here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- API Keys Section -->
+        <div class="section api-keys-section">
+            <h2>API Keys Management</h2>
+            <div style="margin-bottom: 15px;">
+                <input type="text" id="newClientName" placeholder="Enter Client Name" style="padding:8px; border-radius:4px; border:1px solid var(--border-color); background:var(--bg-color); color:#fff; margin-right:10px;">
+                <button id="generateKeyBtn" class="btn-secondary">Generate New API Key</button>
+            </div>
+            <div class="table-container">
+                <table id="apiKeysTable">
+                    <thead>
+                        <tr>
+                            <th>Client Name</th>
+                            <th>API Key</th>
+                            <th>Status</th>
+                            <th>Usage Count</th>
+                            <th>Created At</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="apiKeysBody">
+                        <!-- Keys go here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- File Uploads / Processing Section -->
+        <div class="section imports-section">
+            <h2>Server Files (/uploads)</h2>
+            <button id="refreshFilesBtn" class="btn-secondary">Refresh Files</button>
+            <div class="table-container">
+                <table id="filesTable">
+                    <thead>
+                        <tr>
+                            <th>Filename</th>
+                            <th>Size</th>
+                            <th>Last Modified</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="filesBody">
+                        <!-- Server files list -->
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 style="margin-top:2rem;">Recent Imports</h2>
+            <button id="refreshImportsBtn" class="btn-secondary">Refresh Status</button>
+            <div class="table-container">
+                <table id="importsTable">
+                    <thead>
+                        <tr>
+                            <th>File</th>
+                            <th>Status</th>
+                            <th>Progress</th>
+                            <th>Date</th>
+                            <th>Error</th>
+                        </tr>
+                    </thead>
+                    <tbody id="importsBody">
+                        <!-- Import tasks -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

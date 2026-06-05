@@ -1,0 +1,14 @@
+[Unit]
+Description=Celery Worker for Customer Search API
+After=network.target redis-server.service
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/opt/customer_search_api/backend
+Environment="PATH=/opt/customer_search_api/venv/bin"
+EnvironmentFile=/opt/customer_search_api/backend/.env
+ExecStart=/opt/customer_search_api/venv/bin/celery -A tasks.worker worker --loglevel=info -P prefork -c 4
+
+[Install]
+WantedBy=multi-user.target
