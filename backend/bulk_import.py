@@ -21,6 +21,13 @@ def run_bulk_import():
             if f.lower().endswith(('.csv', '.xlsx')):
                 filepath = os.path.join(root, f)
                 display_name = os.path.relpath(filepath, upload_dir)
+                
+                # Check if this file has already been queued or imported
+                existing = db.query(ImportTask).filter(ImportTask.filename == display_name).order_by(ImportTask.created_at.desc()).first()
+                if existing and existing.status in ["COMPLETED", "PROCESSING", "PENDING"]:
+                    print(f"⏩ Skipped: {display_name} (Already {existing.status})")
+                    continue
+
                 task_id = str(uuid.uuid4())
                 
                 # 1. Register task in the database so it shows up in your dashboard
