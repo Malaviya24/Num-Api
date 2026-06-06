@@ -71,8 +71,8 @@ export default function DashboardPage() {
     try {
       const res = await fetchApi(`/search?mobile_number=${searchMobile}`);
       const data = await res.json();
-      setSearchResults(data.results);
-      setSearchStatus(data.results.length === 0 ? 'NO RESULTS FOUND' : 'SEARCH COMPLETE');
+      setSearchResults(data.data || []);
+      setSearchStatus((data.data || []).length === 0 ? 'NO RESULTS FOUND' : 'SEARCH COMPLETE');
     } catch (e) {
       setSearchStatus('[ERR] SEARCH FAILED');
     }

@@ -18,6 +18,8 @@ def run_bulk_import():
     
     for root, dirs, files in os.walk(upload_dir):
         for f in files:
+            if f.startswith('~$') or f.startswith('._'):
+                continue
             if f.lower().endswith(('.csv', '.xlsx')):
                 filepath = os.path.join(root, f)
                 display_name = os.path.relpath(filepath, upload_dir)

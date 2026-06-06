@@ -23,6 +23,8 @@ async def list_files(user: str = Depends(get_current_user)):
     files = []
     for root, dirs, current_files in os.walk(upload_dir):
         for f in current_files:
+            if f.startswith('~$') or f.startswith('._'):
+                continue
             if f.lower().endswith(('.csv', '.xlsx')):
                 filepath = os.path.join(root, f)
                 display_name = os.path.relpath(filepath, upload_dir)
