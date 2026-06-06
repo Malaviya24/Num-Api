@@ -38,10 +38,15 @@ async def trigger_import(filename: str, db: AsyncSession = Depends(get_db), user
     if not os.path.exists(filepath):
         raise HTTPException(status_code=404, detail="File not found")
         
-    result = await db.execute(select(ImportTask).where(ImportTask.filename == filename))
+    result = await db.execute(select(ImportTask).where(ImportTask.filename == filename).order_by(ImportTask.created_at.desc()))
     task = result.scalars().first()
-    if task and task.status in ["PENDING", "PROCESSING"]:
+    
+    if task and task.status == "PROCESSING":
         return {"message": "File is already being processed", "task_id": task.task_id}
+        
+    if task and task.status == "PENDING":
+        import_file_task.delay(task.task_id, filepath)
+        return {"message": "Import re-triggered", "task_id": task.task_id}
         
     task_id = str(uuid.uuid4())
     new_task = ImportTask(
