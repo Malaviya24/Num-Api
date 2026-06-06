@@ -62,10 +62,13 @@ def update_progress(db, task_id: str, processed: int):
         task.processed_rows = processed
         db.commit()
 
-def extract_val(row_dict, keys):
+def extract_val(row_dict, keys, max_len=None):
     for k in keys:
         if k in row_dict and row_dict[k]:
-            return str(row_dict[k]).strip()
+            val = str(row_dict[k]).strip()
+            if max_len and len(val) > max_len:
+                val = val[:max_len]
+            return val
     return ''
 
 def process_csv(filepath: str, task_id: str, db) -> int:
@@ -83,15 +86,15 @@ def process_csv(filepath: str, task_id: str, db) -> int:
             if not mobile: continue
             
             batch.append([
-                mobile,
-                extract_val(row_dict, ['full_name', 'name', 'customer_name']),
-                extract_val(row_dict, ['email', 'email_id']),
+                mobile[:15],
+                extract_val(row_dict, ['full_name', 'name', 'customer_name'], 255),
+                extract_val(row_dict, ['email', 'email_id'], 255),
                 extract_val(row_dict, ['address', 'street']),
-                extract_val(row_dict, ['city']),
-                extract_val(row_dict, ['state']),
-                extract_val(row_dict, ['pincode', 'zip', 'zipcode', 'pin']),
-                extract_val(row_dict, ['company', 'organization']),
-                filename
+                extract_val(row_dict, ['city'], 100),
+                extract_val(row_dict, ['state'], 100),
+                extract_val(row_dict, ['pincode', 'zip', 'zipcode', 'pin'], 20),
+                extract_val(row_dict, ['company', 'organization'], 255),
+                filename[:255]
             ])
             
             if len(batch) >= batch_size:
@@ -128,15 +131,15 @@ def process_xlsx(filepath: str, task_id: str, db) -> int:
         if not mobile or mobile == 'None': continue
         
         batch.append([
-            mobile,
-            extract_val(row_dict, ['full_name', 'name', 'customer_name']),
-            extract_val(row_dict, ['email', 'email_id']),
+            mobile[:15],
+            extract_val(row_dict, ['full_name', 'name', 'customer_name'], 255),
+            extract_val(row_dict, ['email', 'email_id'], 255),
             extract_val(row_dict, ['address', 'street']),
-            extract_val(row_dict, ['city']),
-            extract_val(row_dict, ['state']),
-            extract_val(row_dict, ['pincode', 'zip', 'zipcode', 'pin']),
-            extract_val(row_dict, ['company', 'organization']),
-            filename
+            extract_val(row_dict, ['city'], 100),
+            extract_val(row_dict, ['state'], 100),
+            extract_val(row_dict, ['pincode', 'zip', 'zipcode', 'pin'], 20),
+            extract_val(row_dict, ['company', 'organization'], 255),
+            filename[:255]
         ])
         
         if len(batch) >= batch_size:
