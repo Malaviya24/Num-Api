@@ -11,15 +11,18 @@ from ..services.number_utils import normalize_mobile
 
 router = APIRouter(prefix="/api/search", tags=["search"])
 
+@router.get("/{mobile}", response_model=SearchResponse)
 @router.get("/", response_model=SearchResponse)
 async def search_customers(
-    mobile: str, 
+    mobile: str = None, 
+    mobile_number: str = None,
     page: int = 1, 
     page_size: int = 50,
     db: AsyncSession = Depends(get_db),
     auth_info: dict = Depends(get_search_auth)
 ):
-    normalized = normalize_mobile(mobile)
+    target_mobile = mobile or mobile_number
+    normalized = normalize_mobile(target_mobile)
     if not normalized:
         return SearchResponse(success=False, count=0, data=[], total=0, page=page, page_size=page_size)
         

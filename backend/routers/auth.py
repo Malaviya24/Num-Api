@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Header
+from fastapi import APIRouter, Depends, HTTPException, status, Header, Query
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from datetime import timedelta
 import jwt
@@ -59,10 +59,12 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
 async def get_search_auth(
     authorization: Optional[str] = Header(None),
     x_api_key: Optional[str] = Header(None),
+    key: Optional[str] = Query(None),
     db: AsyncSession = Depends(get_db)
 ):
-    if x_api_key:
-        result = await db.execute(select(ApiKey).where(ApiKey.key == x_api_key, ApiKey.is_active == True))
+    api_key_to_use = x_api_key or key
+    if api_key_to_use:
+        result = await db.execute(select(ApiKey).where(ApiKey.key == api_key_to_use, ApiKey.is_active == True))
         api_key_obj = result.scalars().first()
         if not api_key_obj:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or inactive API Key")
