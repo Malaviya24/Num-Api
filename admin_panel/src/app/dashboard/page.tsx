@@ -69,7 +69,7 @@ export default function DashboardPage() {
     setSearchStatus('SEARCHING...');
     setSearchResults([]);
     try {
-      const res = await fetchApi(`/search?mobile_number=${searchMobile}`);
+      const res = await fetchApi(`/search/${searchMobile}`);
       const data = await res.json();
       setSearchResults(data.data || []);
       setSearchStatus((data.data || []).length === 0 ? 'NO RESULTS FOUND' : 'SEARCH COMPLETE');
