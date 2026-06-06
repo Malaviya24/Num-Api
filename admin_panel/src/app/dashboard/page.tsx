@@ -208,7 +208,7 @@ export default function DashboardPage() {
                   {apiKeys.map((k) => (
                     <tr key={k.id} className="border-b border-muted">
                       <td className="py-1 pr-2">{k.client_name}</td>
-                      <td className="py-1 pr-2">****{k.key_prefix}</td>
+                      <td className="py-1 pr-2 text-secondary break-all">{k.key}</td>
                       <td className="py-1 pr-2">{k.usage_count}</td>
                       <td className="py-1 text-right">
                         {k.is_active ? (
