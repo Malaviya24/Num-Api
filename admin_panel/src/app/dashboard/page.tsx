@@ -12,7 +12,7 @@ export default function DashboardPage() {
   const router = useRouter();
   
   // State for stats
-  const [stats, setStats] = useState({ total_records: 0, completed_imports: 0 });
+  const [stats, setStats] = useState({ total_records: 0, completed_imports: 0, status_counts: {} as Record<string, number> });
   const [tasks, setTasks] = useState<any[]>([]);
   
   // State for search
@@ -35,7 +35,11 @@ export default function DashboardPage() {
     try {
       const statsRes = await fetchApi('/dashboard/stats');
       const statsData = await statsRes.json();
-      setStats({ total_records: statsData.total_records || 0, completed_imports: statsData.total_uploaded_files || 0 });
+      setStats({ 
+        total_records: statsData.total_records || 0, 
+        completed_imports: statsData.total_uploaded_files || 0,
+        status_counts: statsData.status_counts || {} 
+      });
       setTasks(statsData.recent_uploads || []);
       
       const keysRes = await fetchApi('/keys/');
@@ -123,11 +127,16 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         
         {/* STATS PANE */}
-        <TerminalWindow title="SYSTEM STATUS">
+        <TerminalWindow title="SYSTEM STATUS" scrollable>
           <div className="space-y-2 p-2">
             <div>TOTAL RECORDS: <span className="font-bold">{stats.total_records?.toLocaleString() || 0}</span></div>
             <div className="text-muted">---</div>
-            <div>IMPORTS COMPLETED: <span className="font-bold">{stats.completed_imports}</span></div>
+            <div className="grid grid-cols-2 gap-2 text-sm">
+              <div>🟢 COMPLETED: {stats.status_counts['COMPLETED'] || 0}</div>
+              <div>🟡 PROCESSING: {stats.status_counts['PROCESSING'] || 0}</div>
+              <div>⚪ PENDING: {stats.status_counts['PENDING'] || 0}</div>
+              <div>🔴 FAILED: {stats.status_counts['FAILED'] || 0}</div>
+            </div>
             
             {tasks.length > 0 && (
               <div className="mt-4 border-t border-primary pt-2">
@@ -144,7 +153,7 @@ export default function DashboardPage() {
         </TerminalWindow>
 
         {/* SEARCH PANE */}
-        <TerminalWindow title="QUERY INTERFACE">
+        <TerminalWindow title="QUERY INTERFACE" scrollable>
           <div className="p-2 space-y-4">
             <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2">
               <TerminalInput 
@@ -185,7 +194,7 @@ export default function DashboardPage() {
         </TerminalWindow>
 
         {/* API KEYS PANE */}
-        <TerminalWindow title="ACCESS TOKENS">
+        <TerminalWindow title="ACCESS TOKENS" scrollable>
           <div className="p-2 space-y-4">
             <form onSubmit={handleGenerateKey} className="flex flex-col sm:flex-row gap-2">
               <TerminalInput 
@@ -238,7 +247,7 @@ export default function DashboardPage() {
         </TerminalWindow>
 
         {/* SERVER FILES PANE */}
-        <TerminalWindow title="LOCAL STORAGE">
+        <TerminalWindow title="LOCAL STORAGE" scrollable>
           <div className="p-2 space-y-2">
             <div className="text-muted mb-2">PATH: /uploads</div>
             <div className="space-y-1">

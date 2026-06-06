@@ -22,8 +22,12 @@ async def get_stats(db: AsyncSession = Depends(get_db), user: str = Depends(get_
     
     recent_uploads = await db.execute(select(ImportTask).order_by(ImportTask.created_at.desc()).limit(5))
     
+    status_counts_result = await db.execute(select(ImportTask.status, func.count(ImportTask.id)).group_by(ImportTask.status))
+    status_counts = {k: v for k, v in status_counts_result.all()}
+    
     return {
         "total_records": total_records,
         "total_uploaded_files": total_files,
-        "recent_uploads": recent_uploads.scalars().all()
+        "recent_uploads": recent_uploads.scalars().all(),
+        "status_counts": status_counts
     }
