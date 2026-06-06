@@ -20,9 +20,13 @@ export default function DashboardPage() {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searchStatus, setSearchStatus] = useState('');
   
-  // State for API keys
   const [apiKeys, setApiKeys] = useState<any[]>([]);
   const [newClientName, setNewClientName] = useState('');
+  const [visibleKeys, setVisibleKeys] = useState<Record<number, boolean>>({});
+
+  const toggleKeyVisibility = (id: number) => {
+    setVisibleKeys(prev => ({ ...prev, [id]: !prev[id] }));
+  };
   
   // State for files
   const [files, setFiles] = useState<any[]>([]);
@@ -199,7 +203,7 @@ export default function DashboardPage() {
                 <thead>
                   <tr className="border-b border-primary text-muted">
                     <th className="py-1 pr-2">CLIENT</th>
-                    <th className="py-1 pr-2">KEY (HIDDEN)</th>
+                    <th className="py-1 pr-2">KEY</th>
                     <th className="py-1 pr-2">USAGE</th>
                     <th className="py-1 text-right">ACTION</th>
                   </tr>
@@ -208,7 +212,12 @@ export default function DashboardPage() {
                   {apiKeys.map((k) => (
                     <tr key={k.id} className="border-b border-muted">
                       <td className="py-1 pr-2">{k.client_name}</td>
-                      <td className="py-1 pr-2 text-secondary break-all">{k.key}</td>
+                      <td className="py-1 pr-2 text-secondary break-all">
+                        {visibleKeys[k.id] ? k.key : '********************************'}
+                        <button onClick={() => toggleKeyVisibility(k.id)} className="ml-2 text-primary hover:bg-primary hover:text-black px-1 rounded">
+                          {visibleKeys[k.id] ? '[ HIDE ]' : '[ SHOW ]'}
+                        </button>
+                      </td>
                       <td className="py-1 pr-2">{k.usage_count}</td>
                       <td className="py-1 text-right">
                         {k.is_active ? (
