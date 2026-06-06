@@ -16,25 +16,27 @@ def run_bulk_import():
     print("--- STARTING BULK IMPORT ---")
     count = 0
     
-    for f in os.listdir(upload_dir):
-        if f.lower().endswith(('.csv', '.xlsx')):
-            filepath = os.path.join(upload_dir, f)
-            task_id = str(uuid.uuid4())
-            
-            # 1. Register task in the database so it shows up in your dashboard
-            new_task = ImportTask(
-                task_id=task_id,
-                filename=f,
-                status="PENDING"
-            )
-            db.add(new_task)
-            db.commit()
-            
-            # 2. Send the file to the Celery worker queue instantly
-            import_file_task.delay(task_id, filepath)
-            
-            print(f"✅ Queued: {f} (Task ID: {task_id})")
-            count += 1
+    for root, dirs, files in os.walk(upload_dir):
+        for f in files:
+            if f.lower().endswith(('.csv', '.xlsx')):
+                filepath = os.path.join(root, f)
+                display_name = os.path.relpath(filepath, upload_dir)
+                task_id = str(uuid.uuid4())
+                
+                # 1. Register task in the database so it shows up in your dashboard
+                new_task = ImportTask(
+                    task_id=task_id,
+                    filename=display_name,
+                    status="PENDING"
+                )
+                db.add(new_task)
+                db.commit()
+                
+                # 2. Send the file to the Celery worker queue instantly
+                import_file_task.delay(task_id, filepath)
+                
+                print(f"✅ Queued: {display_name} (Task ID: {task_id})")
+                count += 1
             
     print(f"--- SUCCESS: {count} files added to the processing queue! ---")
 

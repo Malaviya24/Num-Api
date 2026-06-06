@@ -21,15 +21,17 @@ async def list_files(user: str = Depends(get_current_user)):
         return []
         
     files = []
-    for f in os.listdir(upload_dir):
-        if f.lower().endswith(('.csv', '.xlsx')):
-            filepath = os.path.join(upload_dir, f)
-            stat = os.stat(filepath)
-            files.append(ServerFile(
-                filename=f,
-                size=stat.st_size,
-                last_modified=datetime.fromtimestamp(stat.st_mtime)
-            ))
+    for root, dirs, current_files in os.walk(upload_dir):
+        for f in current_files:
+            if f.lower().endswith(('.csv', '.xlsx')):
+                filepath = os.path.join(root, f)
+                display_name = os.path.relpath(filepath, upload_dir)
+                stat = os.stat(filepath)
+                files.append(ServerFile(
+                    filename=display_name,
+                    size=stat.st_size,
+                    last_modified=datetime.fromtimestamp(stat.st_mtime)
+                ))
     return files
 
 @router.post("/import/{filename}")
